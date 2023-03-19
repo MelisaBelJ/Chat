@@ -20,16 +20,13 @@ class Cliente():
                 
     def recibeMensajes(self):
         while self.continua.value==1:
-            sys.stdout.write("\033[F")
-            sys.stdout.write("\033[K")
-            sys.stdout.write("\033[36m")
+            self.desplazaTerminal(1, 36)
             usuario = self.conn.recv()
             message = self.conn.recv()
             if usuario != '':
                 print(f'{usuario}:', message, '\n')
             else:
                 self.conn.send('')
-            sys.stdout.write("\033[37m")
             self.continua.value = int(message != 'adios')
         print('Fuera')
         self.conn.send('adios')
@@ -38,14 +35,17 @@ class Cliente():
     def enviaMensajes(self):
         while self.continua.value == 1:
             message = input('')
-            sys.stdout.write("\033[F")
-            sys.stdout.write("\033[K")
-            sys.stdout.write("\033[F")
-            sys.stdout.write("\033[K")
-            sys.stdout.write("\033[37m")
+            self.desplazaTerminal(2, 37)
             print('Yo:', message, '\n')
             self.conn.send(message)
             self.continua.value = int(message != 'adios')
+            
+    def desplazaTerminal(self, n, cod):
+        for i in range(n):
+            sys.stdout.write("\033[F")
+            sys.stdout.write("\033[K")
+            
+        sys.stdout.write(f'\033[{cod}m')
                 
 if __name__=="__main__":
     ip_address = "127.0.0.1"
